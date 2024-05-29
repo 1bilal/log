@@ -45,3 +45,15 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ["id", "likes", "dislikes"]
+
+
+class CommentLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "likes", "dislikes"]

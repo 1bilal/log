@@ -1,6 +1,13 @@
 from rest_framework import generics, permissions
+from rest_framework.response import Response
 from .models import Article, Comment, Category
-from .serializers import ArticleSerializer, CommentSerializer, CategorySerializer
+from .serializers import (
+    ArticleSerializer,
+    CommentSerializer,
+    CategorySerializer,
+    LikeSerializer,
+    CommentLikeSerializer,
+)
 
 
 class ArticleListCreate(generics.ListCreateAPIView):
@@ -55,3 +62,63 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class ArticleLikeToggle(generics.GenericAPIView):
+    queryset = Article.objects.all()
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk, *args, **kwargs):
+        article = self.get_object()
+        user = request.user
+        if user in article.likes.all():
+            article.likes.remove(user)
+        else:
+            article.likes.add(user)
+        return Response(self.get_serializer(article).data)
+
+
+class ArticleDislikeToggle(generics.GenericAPIView):
+    queryset = Article.objects.all()
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk, *args, **kwargs):
+        article = self.get_object()
+        user = request.user
+        if user in article.dislikes.all():
+            article.dislikes.remove(user)
+        else:
+            article.dislikes.add(user)
+        return Response(self.get_serializer(article).data)
+
+
+class CommentLikeToggle(generics.GenericAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentLikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk, *args, **kwargs):
+        comment = self.get_object()
+        user = request.user
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+        else:
+            comment.likes.add(user)
+        return Response(self.get_serializer(comment).data)
+
+
+class CommentDislikeToggle(generics.GenericAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentLikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk, *args, **kwargs):
+        comment = self.get_object()
+        user = request.user
+        if user in comment.dislikes.all():
+            comment.dislikes.remove(user)
+        else:
+            comment.dislikes.add(user)
+        return Response(self.get_serializer(comment).data)

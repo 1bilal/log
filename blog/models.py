@@ -19,6 +19,10 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     tags = models.CharField(max_length=100, blank=True)
+    likes = models.ManyToManyField(User, related_name="liked_articles", blank=True)
+    dislikes = models.ManyToManyField(
+        User, related_name="disliked_articles", blank=True
+    )
 
     def __str__(self):
         return self.title
@@ -32,3 +36,7 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(User, related_name="liked_comments", blank=True)
+    dislikes = models.ManyToManyField(
+        User, related_name="disliked_comments", blank=True
+    )
